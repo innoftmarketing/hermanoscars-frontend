@@ -2,7 +2,12 @@
   "name": "hermanoscars-frontend",
   "version": "1.0.0",
   "private": true,
-  "scripts": { "dev": "next dev", "build": "next build", "start": "next start", "lint": "next lint" },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
@@ -23,6 +28,7 @@
     "react": "^19.0.0",
     "react-datepicker": "^7.5.0",
     "react-dom": "^19.0.0",
+    "react-hooks-global-state": "^2.1.0",
     "sass": "^1.86.0",
     "server-only": "^0.0.1",
     "typescript": "^5.7.0"

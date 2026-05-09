@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "./globals.scss";
+import ClientCommons from "./ClientCommons";
 
 export const metadata: Metadata = {
   title: "Hermanos Cars — Location de voiture Casablanca Aéroport",
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body>{children}</body>
+      <body className="bg-white text-base dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200">
+        <ClientCommons />
+        {children}
+      </body>
     </html>
   );
 }
