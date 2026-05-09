@@ -327,7 +327,8 @@ const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, defau
     <div className="nc-ListingCarDetailPage">
       {/* PHOTO HEADER */}
       <header className="rounded-md sm:rounded-xl">
-        <div className="relative grid grid-cols-4 gap-1 sm:gap-2">
+        {/* min-h ensures grid rows have height even with 1 photo */}
+        <div className="relative grid grid-cols-4 gap-1 sm:gap-2 min-h-[280px] sm:min-h-[400px]">
           <div
             className="col-span-2 row-span-2 relative rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
             onClick={handleOpenModalImageGallery}
@@ -338,6 +339,7 @@ const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, defau
               alt={car.title}
               className="object-cover rounded-md sm:rounded-xl"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+              priority
             />
             <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
           </div>
