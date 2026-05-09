@@ -10,6 +10,7 @@ export interface LocationInputProps {
   className?: string;
   divHideVerticalLineClass?: string;
   autoFocus?: boolean;
+  onSelectLocation?: (value: string) => void;
 }
 
 const LocationInput: FC<LocationInputProps> = ({
@@ -18,12 +19,29 @@ const LocationInput: FC<LocationInputProps> = ({
   desc = "Where are you going?",
   className = "nc-flex-1.5",
   divHideVerticalLineClass = "left-10 -right-0.5",
+  onSelectLocation,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [value, setValue] = useState("");
   const [showPopover, setShowPopover] = useState(autoFocus);
+  const [offices, setOffices] = useState<{ id: number; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/wp-json/cars/v1/offices")
+      .then((r) => r.json())
+      .then(setOffices)
+      .catch(() => setOffices([
+        { id: 107, name: "CASABLANCA AIRPORT" },
+        { id: 99, name: "CASABLANCA CITY" },
+        { id: 98, name: "MARRAKECH AIRPORT" },
+        { id: 1219, name: "AGADIR AIRPORT" },
+        { id: 1222, name: "RABAT AIRPORT" },
+        { id: 1224, name: "FES AIRPORT" },
+        { id: 1226, name: "TANGIER AIRPORT" },
+      ]));
+  }, []);
 
   useEffect(() => {
     setShowPopover(autoFocus);
@@ -59,31 +77,30 @@ const LocationInput: FC<LocationInputProps> = ({
   const handleSelectLocation = (item: string) => {
     setValue(item);
     setShowPopover(false);
+    onSelectLocation?.(item);
   };
 
   const renderRecentSearches = () => {
+    const filtered = value
+      ? offices.filter((o) => o.name.toLowerCase().includes(value.toLowerCase()))
+      : offices;
     return (
       <>
         <h3 className="block mt-2 sm:mt-0 px-4 sm:px-8 font-semibold text-base sm:text-lg text-neutral-800 dark:text-neutral-100">
-          Recent searches
+          Nos agences
         </h3>
         <div className="mt-2">
-          {[
-            "Hamptons, Suffolk County, NY",
-            "Las Vegas, NV, United States",
-            "Ueno, Taito, Tokyo",
-            "Ikebukuro, Toshima, Tokyo",
-          ].map((item) => (
+          {filtered.map((office) => (
             <span
-              onClick={() => handleSelectLocation(item)}
-              key={item}
+              onClick={() => handleSelectLocation(office.name)}
+              key={office.id}
               className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
             >
               <span className="block text-neutral-400">
-                <ClockIcon className="h-4 sm:h-6 w-4 sm:w-6" />
+                <MapPinIcon className="h-4 sm:h-6 w-4 sm:w-6" />
               </span>
-              <span className=" block font-medium text-neutral-700 dark:text-neutral-200">
-                {item}
+              <span className="block font-medium text-neutral-700 dark:text-neutral-200">
+                {office.name}
               </span>
             </span>
           ))}
@@ -93,24 +110,22 @@ const LocationInput: FC<LocationInputProps> = ({
   };
 
   const renderSearchValue = () => {
+    const filtered = offices.filter((o) =>
+      o.name.toLowerCase().includes(value.toLowerCase())
+    );
     return (
       <>
-        {[
-          "Ha Noi, Viet Nam",
-          "San Diego, CA",
-          "Humboldt Park, Chicago, IL",
-          "Bangor, Northern Ireland",
-        ].map((item) => (
+        {filtered.map((office) => (
           <span
-            onClick={() => handleSelectLocation(item)}
-            key={item}
+            onClick={() => handleSelectLocation(office.name)}
+            key={office.id}
             className="flex px-4 sm:px-8 items-center space-x-3 sm:space-x-4 py-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
           >
             <span className="block text-neutral-400">
-              <ClockIcon className="h-4 w-4 sm:h-6 sm:w-6" />
+              <MapPinIcon className="h-4 w-4 sm:h-6 sm:w-6" />
             </span>
             <span className="block font-medium text-neutral-700 dark:text-neutral-200">
-              {item}
+              {office.name}
             </span>
           </span>
         ))}

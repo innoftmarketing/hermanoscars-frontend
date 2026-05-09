@@ -14,22 +14,23 @@ export interface RentalCarDatesRangeInputProps {
   className?: string;
   fieldClassName?: string;
   hasButtonSubmit?: boolean;
+  onDatesChange?: (start: Date | null, end: Date | null) => void;
 }
 
 const RentalCarDatesRangeInput: FC<RentalCarDatesRangeInputProps> = ({
   className = "",
   fieldClassName = "[ nc-hero-field-padding ]",
   hasButtonSubmit = true,
+  onDatesChange,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date("2023/03/01")
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date("2023/03/16"));
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const onChangeDate = (dates: [Date | null, Date | null]) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+    onDatesChange?.(start, end);
   };
 
   const renderInput = () => {

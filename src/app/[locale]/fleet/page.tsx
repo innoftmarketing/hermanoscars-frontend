@@ -1,35 +1,24 @@
-import { getTranslations } from "next-intl/server";
+import React from "react";
+import SectionGridFilterCard from "./SectionGridFilterCard";
 import { getCars } from "@/lib/api/cars";
-import { getOffices } from "@/lib/api/offices";
-import FleetClient from "./FleetClient";
+import { carToCarDataType } from "@/lib/api/mappers";
 
-export default async function FleetPage({ params, searchParams }: {
+export default async function FleetPage({
+  params,
+}: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ office?: string; start?: string; end?: string; transmission?: string; fuel?: string }>;
 }) {
   const { locale } = await params;
-  const filters = await searchParams;
-  const t = await getTranslations("fleet");
-
-  const [cars, offices] = await Promise.all([getCars(), getOffices()]);
+  const cars = await getCars();
+  const carData = cars.map((car) => carToCarDataType(car, locale));
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">{t("title")}</h1>
-        <p className="text-neutral-500 dark:text-neutral-400 mt-1">{t("subtitle")}</p>
-      </div>
-      <FleetClient
-        cars={cars}
-        offices={offices}
-        locale={locale}
-        initialFilters={{
-          office: filters.office ? Number(filters.office) : null,
-          start: filters.start || null,
-          end: filters.end || null,
-          transmission: filters.transmission || null,
-          fuel: filters.fuel || null,
-        }}
+    <div className="container">
+      <SectionGridFilterCard
+        className="pb-24 lg:pb-28"
+        data={carData}
+        heading="Notre Flotte"
+        subHeading={`${cars.length} véhicules disponibles`}
       />
     </div>
   );

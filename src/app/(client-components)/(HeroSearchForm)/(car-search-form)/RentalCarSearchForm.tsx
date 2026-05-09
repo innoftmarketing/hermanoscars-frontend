@@ -3,65 +3,47 @@
 import React, { FC, useState } from "react";
 import LocationInput from "../LocationInput";
 import RentalCarDatesRangeInput from "./RentalCarDatesRangeInput";
+import ButtonSubmit from "../ButtonSubmit";
+import { usePathname } from "next/navigation";
 
 export interface RentalCarSearchFormProps {}
 
 const RentalCarSearchForm: FC<RentalCarSearchFormProps> = ({}) => {
-  const [dropOffLocationType, setDropOffLocationType] = useState<
-    "same" | "different"
-  >("different");
+  const pathname = usePathname();
+  // Extract locale from pathname (e.g. /fr/... → fr)
+  const locale = pathname.split("/")[1] || "fr";
 
-  const renderRadioBtn = () => {
-    return (
-      <div className=" py-5 [ nc-hero-field-padding ] flex items-center flex-wrap flex-row border-b border-neutral-100 dark:border-neutral-700">
-        <div
-          className={`py-1.5 px-4 flex items-center rounded-full font-medium text-xs cursor-pointer mr-2 my-1 sm:mr-3 ${
-            dropOffLocationType === "different"
-              ? "bg-black text-white shadow-black/10 shadow-lg"
-              : "border border-neutral-300 dark:border-neutral-700"
-          }`}
-          onClick={(e) => setDropOffLocationType("different")}
-        >
-          Different drop off
-        </div>
-        <div
-          className={`py-1.5 px-4 flex items-center rounded-full font-medium text-xs cursor-pointer mr-2 my-1 sm:mr-3 ${
-            dropOffLocationType === "same"
-              ? "bg-black text-white shadow-black/10 shadow-lg"
-              : "border border-neutral-300 dark:border-neutral-700"
-          }`}
-          onClick={(e) => setDropOffLocationType("same")}
-        >
-          Same drop off
-        </div>
-      </div>
-    );
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const buildSearchUrl = () => {
+    const params = new URLSearchParams();
+    if (pickupLocation) params.set("location", pickupLocation);
+    if (startDate) params.set("start", startDate.toISOString().split("T")[0]);
+    if (endDate) params.set("end", endDate.toISOString().split("T")[0]);
+    return `/${locale}/fleet?${params.toString()}`;
   };
-
-  const isDdropOffdifferent = dropOffLocationType === "different";
 
   return (
     <form className="w-full relative mt-8 rounded-[40px] xl:rounded-[49px] rounded-t-2xl xl:rounded-t-3xl shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800">
-      {renderRadioBtn()}
-      <div className={`relative flex flex-row`}>
+      {/* Simplified: single pickup location (same pickup/dropoff for car rental agency) */}
+      <div className="relative flex flex-row">
         <LocationInput
-          placeHolder="City or Airport"
-          desc="Pick up location"
+          placeHolder="Agence de prise en charge"
+          desc="Où voulez-vous louer ?"
           className="flex-1"
+          onSelectLocation={setPickupLocation}
         />
-        {isDdropOffdifferent && (
-          <>
-            <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
-            <LocationInput
-              placeHolder="City or Airport"
-              desc="Drop off location"
-              className="flex-1"
-              divHideVerticalLineClass="-inset-x-0.5"
-            />
-          </>
-        )}
         <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
-        <RentalCarDatesRangeInput className="flex-1" />
+        <RentalCarDatesRangeInput
+          className="flex-1"
+          onDatesChange={(start, end) => {
+            setStartDate(start);
+            setEndDate(end);
+          }}
+        />
+        <ButtonSubmit href={buildSearchUrl()} />
       </div>
     </form>
   );

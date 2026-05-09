@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import SiteHeader from "@/components/SiteHeader";
+import SiteHeader from "@/app/(client-components)/(Header)/SiteHeader";
 import Footer from "@/components/Footer";
 
 export function generateStaticParams() {
