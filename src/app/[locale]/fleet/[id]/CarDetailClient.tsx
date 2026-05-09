@@ -325,12 +325,12 @@ const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, defau
 
   return (
     <div className="nc-ListingCarDetailPage">
-      {/* PHOTO HEADER */}
+      {/* PHOTO HEADER — adaptive layout based on photo count */}
       <header className="rounded-md sm:rounded-xl">
-        {/* min-h ensures grid rows have height even with 1 photo */}
-        <div className="relative grid grid-cols-4 gap-1 sm:gap-2 min-h-[280px] sm:min-h-[400px]">
+        {PHOTOS.length === 1 ? (
+          // Single photo: full-width hero
           <div
-            className="col-span-2 row-span-2 relative rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
+            className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
             onClick={handleOpenModalImageGallery}
           >
             <Image
@@ -338,46 +338,67 @@ const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, defau
               src={PHOTOS[0]}
               alt={car.title}
               className="object-cover rounded-md sm:rounded-xl"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+              sizes="100vw"
               priority
             />
             <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
           </div>
-
-          {PHOTOS[1] && (
+        ) : (
+          // Multiple photos: 4-column grid
+          <div className="relative grid grid-cols-4 gap-1 sm:gap-2 min-h-[280px] sm:min-h-[400px]">
             <div
-              className="col-span-1 row-span-2 relative rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
+              className="col-span-2 row-span-2 relative rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
               onClick={handleOpenModalImageGallery}
             >
               <Image
                 fill
-                className="object-cover rounded-md sm:rounded-xl"
-                src={PHOTOS[1]}
+                src={PHOTOS[0]}
                 alt={car.title}
-                sizes="400px"
+                className="object-cover rounded-md sm:rounded-xl"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+                priority
               />
               <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
             </div>
-          )}
 
-          {PHOTOS.filter((_, i) => i >= 2 && i < 4).map((item, index) => (
-            <div key={index} className="relative rounded-md sm:rounded-xl overflow-hidden">
-              <div className="aspect-w-4 aspect-h-3">
+            {PHOTOS[1] && (
+              <div
+                className="col-span-1 row-span-2 relative rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
+                onClick={handleOpenModalImageGallery}
+              >
                 <Image
                   fill
-                  className="object-cover w-full h-full rounded-md sm:rounded-xl"
-                  src={item}
+                  className="object-cover rounded-md sm:rounded-xl"
+                  src={PHOTOS[1]}
                   alt={car.title}
                   sizes="400px"
                 />
+                <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
               </div>
-              <div
-                className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
-                onClick={handleOpenModalImageGallery}
-              />
-            </div>
-          ))}
+            )}
 
+            {PHOTOS.filter((_, i) => i >= 2 && i < 4).map((item, index) => (
+              <div key={index} className="relative rounded-md sm:rounded-xl overflow-hidden">
+                <div className="aspect-w-4 aspect-h-3">
+                  <Image
+                    fill
+                    className="object-cover w-full h-full rounded-md sm:rounded-xl"
+                    src={item}
+                    alt={car.title}
+                    sizes="400px"
+                  />
+                </div>
+                <div
+                  className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+                  onClick={handleOpenModalImageGallery}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Show all photos button — only with multiple photos */}
+        {PHOTOS.length > 1 && (
           <div
             className="absolute hidden md:flex md:items-center md:justify-center left-3 bottom-3 px-4 py-2 rounded-xl bg-neutral-100 text-neutral-500 cursor-pointer hover:bg-neutral-200 z-10"
             onClick={handleOpenModalImageGallery}
@@ -385,7 +406,7 @@ const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, defau
             <Squares2X2Icon className="h-5 w-5" />
             <span className="ml-2 text-neutral-800 text-sm font-medium">Voir toutes les photos</span>
           </div>
-        </div>
+        )}
       </header>
 
       {/* MAIN CONTENT */}
