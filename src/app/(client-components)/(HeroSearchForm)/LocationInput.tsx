@@ -29,18 +29,20 @@ const LocationInput: FC<LocationInputProps> = ({
   const [offices, setOffices] = useState<{ id: number; name: string }[]>([]);
 
   useEffect(() => {
-    fetch("/wp-json/cars/v1/offices")
-      .then((r) => r.json())
+    const FALLBACK = [
+      { id: 107, name: "CASABLANCA AIRPORT" },
+      { id: 99, name: "CASABLANCA CITY" },
+      { id: 98, name: "MARRAKECH AIRPORT" },
+      { id: 1219, name: "AGADIR AIRPORT" },
+      { id: 1222, name: "RABAT AIRPORT" },
+      { id: 1224, name: "FES AIRPORT" },
+      { id: 1226, name: "TANGIER AIRPORT" },
+    ];
+    // Call our own API route (server-side fetch, no CORS issue)
+    fetch("/api/offices")
+      .then((r) => { if (!r.ok) throw new Error("not ok"); return r.json(); })
       .then(setOffices)
-      .catch(() => setOffices([
-        { id: 107, name: "CASABLANCA AIRPORT" },
-        { id: 99, name: "CASABLANCA CITY" },
-        { id: 98, name: "MARRAKECH AIRPORT" },
-        { id: 1219, name: "AGADIR AIRPORT" },
-        { id: 1222, name: "RABAT AIRPORT" },
-        { id: 1224, name: "FES AIRPORT" },
-        { id: 1226, name: "TANGIER AIRPORT" },
-      ]));
+      .catch(() => setOffices(FALLBACK));
   }, []);
 
   useEffect(() => {

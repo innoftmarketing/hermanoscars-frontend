@@ -38,6 +38,7 @@ const RentalCarSearchForm: FC<RentalCarSearchFormProps> = ({}) => {
         <div className="self-center border-r border-slate-200 dark:border-slate-700 h-8"></div>
         <RentalCarDatesRangeInput
           className="flex-1"
+          hasButtonSubmit={false}
           onDatesChange={(start, end) => {
             setStartDate(start);
             setEndDate(end);

@@ -20,12 +20,21 @@ export default async function CarDetailPage({
 
   const carData = carToCarDataType(car, locale);
   const carOffices = offices.filter((o) => car.officeIds.includes(o.id));
+  const displayOffices = carOffices.length > 0 ? carOffices : offices;
+
+  // Prefer Casablanca Airport (107) as default — it's the primary location
+  const CASA_AIRPORT_ID = 107;
+  const defaultOfficeId =
+    displayOffices.find((o) => o.id === CASA_AIRPORT_ID)?.id ||
+    displayOffices[0]?.id ||
+    null;
 
   return (
     <CarDetailClient
       car={carData}
       rawCar={car}
-      offices={carOffices.length > 0 ? carOffices : offices}
+      offices={displayOffices}
+      defaultOfficeId={defaultOfficeId}
       locale={locale}
     />
   );

@@ -23,15 +23,18 @@ import { buildBookingUrl, checkAvailability } from "@/lib/api/availability";
 
 interface CarDetailClientProps {
   car: CarDataType;
+  defaultOfficeId?: number | null;
   rawCar: Car;
   offices: Office[];
   locale: string;
 }
 
-const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, locale }) => {
+const CarDetailClient: FC<CarDetailClientProps> = ({ car, rawCar, offices, defaultOfficeId, locale }) => {
   const thisPathname = usePathname();
   const router = useRouter();
-  const [selectedOffice, setSelectedOffice] = useState<number>(offices[0]?.id || 0);
+  const [selectedOffice, setSelectedOffice] = useState<number>(
+    defaultOfficeId || offices[0]?.id || 0
+  );
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [availability, setAvailability] = useState<{ available: boolean; checked: boolean } | null>(null);
